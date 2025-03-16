@@ -36,21 +36,21 @@ return {
         ["<Esc>"] = { "actions.close", desc = "Close Oil window" },
       },
       float = {
-        padding = 4,
-        max_width = 40,
-        max_height = 20,
+        padding = 2,
         border = "rounded",
+        max_width = 25,
+        max_height = 15,
         win_options = {
-          winblend = 10,
+          winblend = 15,
           signcolumn = "no",
           foldcolumn = "0",
           statuscolumn = "",
           winhighlight = "FloatBorder:OilBorder",
         },
         override = function(conf)
-          conf.relative = "editor"
-          conf.row = 2
-          conf.col = math.floor(vim.o.columns * 0.5 - (conf.width / 2))
+          conf.relative = "cursor"
+          conf.row = 1
+          conf.col = 0
           return conf
         end,
       },

@@ -8,8 +8,7 @@ return {
     vim.g.knap_settings = {
       texoutputext = "pdf",
       textopdf = "pdflatex -synctex=1 -halt-on-error -interaction=nonstopmode %docroot%",
-      textopdfviewerlaunch =
-      "zathura %outputfile%",
+      textopdfviewerlaunch = "zathura %outputfile%",
       textopdfviewerrefresh = "none", -- Zathura auto-refreshes with SyncTeX
       textopdfforwardjump = "zathura --synctex-forward=%line%:%column%:%srcfile% %outputfile%",
       quiet = true,

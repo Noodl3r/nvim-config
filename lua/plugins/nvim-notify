@@ -1,9 +1,0 @@
-{
-  "rcarriga/nvim-notify",
-  config = function()
-    require("notify").setup({
-      timeout = 0,  -- Set timeout to 0 for persistent notifications
-    })
-    vim.notify = require("notify")  -- Override vim.notify
-  end,
-}

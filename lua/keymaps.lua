@@ -18,44 +18,44 @@ vim.keymap.set("n", "K", vim.lsp.buf.hover)
 vim.keymap.set("n", "gd", vim.lsp.buf.definition)
 vim.keymap.set("n", "gD", vim.lsp.buf.declaration)
 vim.keymap.set("n", "gr", function()
-  -- Trigger the LSP references function and populate the quickfix list
-  vim.lsp.buf.references()
+	-- Trigger the LSP references function and populate the quickfix list
+	vim.lsp.buf.references()
 
-  vim.defer_fn(function()
-    -- Set up an autocmd to remap keys in the quickfix window
-    vim.api.nvim_create_autocmd("FileType", {
-      pattern = "qf", -- Only apply this mapping in quickfix windows
-      callback = function()
-        -- Remap <Enter> to jump to the location and close the quickfix window
-        vim.api.nvim_buf_set_keymap(0, "n", "<CR>", "<CR>:cclose<CR>", { noremap = true, silent = true })
-        vim.api.nvim_buf_set_keymap(0, "n", "q", ":cclose<CR>", { noremap = true, silent = true })
+	vim.defer_fn(function()
+		-- Set up an autocmd to remap keys in the quickfix window
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = "qf", -- Only apply this mapping in quickfix windows
+			callback = function()
+				-- Remap <Enter> to jump to the location and close the quickfix window
+				vim.api.nvim_buf_set_keymap(0, "n", "<CR>", "<CR>:cclose<CR>", { noremap = true, silent = true })
+				vim.api.nvim_buf_set_keymap(0, "n", "q", ":cclose<CR>", { noremap = true, silent = true })
 
-        -- Set up <Tab> to cycle through quickfix list entries
-        vim.keymap.set("n", "<Tab>", function()
-          local current_idx = vim.fn.getqflist({ idx = 0 }).idx
-          local qflist = vim.fn.getqflist() -- Get the current quickfix list
-          if current_idx >= #qflist then
-            vim.cmd("cfirst")
-            vim.cmd("wincmd p")
-          else
-            vim.cmd("cnext")
-            vim.cmd("wincmd p")
-          end
-        end, { noremap = true, silent = true, buffer = 0 })
+				-- Set up <Tab> to cycle through quickfix list entries
+				vim.keymap.set("n", "<Tab>", function()
+					local current_idx = vim.fn.getqflist({ idx = 0 }).idx
+					local qflist = vim.fn.getqflist() -- Get the current quickfix list
+					if current_idx >= #qflist then
+						vim.cmd("cfirst")
+						vim.cmd("wincmd p")
+					else
+						vim.cmd("cnext")
+						vim.cmd("wincmd p")
+					end
+				end, { noremap = true, silent = true, buffer = 0 })
 
-        vim.keymap.set("n", "<S-Tab>", function()
-          local current_idx = vim.fn.getqflist({ idx = 0 }).idx
-          if current_idx < 2 then
-            vim.cmd("clast")
-            vim.cmd("wincmd p")
-          else
-            vim.cmd("cprev")
-            vim.cmd("wincmd p")
-          end
-        end, { noremap = true, silent = true, buffer = 0 })
-      end,
-    })
-  end, 0)
+				vim.keymap.set("n", "<S-Tab>", function()
+					local current_idx = vim.fn.getqflist({ idx = 0 }).idx
+					if current_idx < 2 then
+						vim.cmd("clast")
+						vim.cmd("wincmd p")
+					else
+						vim.cmd("cprev")
+						vim.cmd("wincmd p")
+					end
+				end, { noremap = true, silent = true, buffer = 0 })
+			end,
+		})
+	end, 0)
 end)
 
 vim.keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, {})
@@ -65,11 +65,11 @@ vim.lsp.set_log_level("warn")
 vim.keymap.set("n", "<C-n>", ":Telescope colorscheme<CR>")
 
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = "python",
-  callback = function()
-    vim.api.nvim_buf_set_keymap(0, "n", "<leader>l", ":w<CR>:vert rightbelow split | term python3 %<CR>",
-      { noremap = true, silent = true })
-  end,
+	pattern = "python",
+	callback = function()
+		vim.api.nvim_buf_set_keymap(0, "n", "<leader>l", ":w<CR>:vert rightbelow split | term python3 %<CR>",
+			{ noremap = true, silent = true })
+	end,
 })
 
 
@@ -83,8 +83,13 @@ vim.keymap.set("i", "<Up>", "<C-o>gk", { noremap = true })
 vim.keymap.set("i", "<Down>", "<C-o>gj", { noremap = true })
 
 vim.keymap.set("i", "<CR>", function()
-  return vim.fn.pumvisible() == 1 and "<C-y>" or "<CR>"
+	return vim.fn.pumvisible() == 1 and "<C-y>" or "<CR>"
 end, { expr = true, noremap = true })
 
 -- Map <C-l> in insert mode to correct the last misspelled word
 vim.keymap.set("i", "<C-l>", "<c-g>u<Esc>[s1z=`]a<c-g>u", { noremap = true, silent = true })
+
+-- For normal mode (nnoremap)
+vim.keymap.set('n', 'S', ':%s///g<Left><Left><Left>', { noremap = true, silent = true })
+-- For visual mode (xnoremap)
+vim.keymap.set('x', 'S', ':s///g<Left><Left><Left>', { noremap = true, silent = true })

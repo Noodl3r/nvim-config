@@ -44,9 +44,9 @@ return {
     vim.g.harpoon_ui_width = 50
     vim.g.harpoon_ui_height = 20
     -- -- Toggle previous & next buffers stored within Harpoon list
-    -- vim.keymap.set("n", "<C-S-j>", function()
-    -- 	harpoon:list():prev()
-    -- end)
+    vim.keymap.set("n", "gt", function()
+    	harpoon:list():prev()
+    end)
     -- vim.keymap.set("n", "<C-S-k>", function()
     -- 	harpoon:list():next()
     -- end)

@@ -22,6 +22,13 @@ return {
           height = 0.8,
         },
       },
+      pickers = {
+        find_files = require("telescope.themes").get_ivy(),
+        live_grep = require("telescope.themes").get_ivy(),
+        colorscheme = require("telescope.themes").get_ivy(),
+        buffers = require("telescope.themes").get_cursor(),
+        help_tags = require("telescope.themes").get_ivy(),
+      }
     })
 
 

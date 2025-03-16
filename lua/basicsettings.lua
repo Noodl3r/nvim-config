@@ -25,10 +25,7 @@ vim.opt.cmdheight = 0                                    -- You can also hide th
 vim.o.scrolloff = 5
 vim.opt.smartcase = true
 
-vim.opt.tabstop = 2
 vim.opt.shiftwidth = 2
-vim.opt.expandtab = true
-vim.bo.softtabstop = 2
 vim.o.smartindent = true               -- Automatically insert indentation
 vim.o.autoindent = true                -- Enable auto indentation
 vim.o.completeopt = "menuone,noselect" -- Enhance completion behavior
