@@ -1,53 +1,43 @@
-return {
-	{
-		"williamboman/mason.nvim",
-		config = function()
-			require("mason").setup({
-				PATH = "prepend",
-			})
-		end,
-	},
-	{
-		"williamboman/mason-lspconfig.nvim",
-		config = function()
-			require("mason-lspconfig").setup({
-				ensure_installed = {
-					"bashls",
-					"lua_ls",
-					"rust_analyzer",
-					--"gopls",
-					"templ",
-					"html",
-					"cssls",
-					"emmet_language_server",
-					"htmx",
-					"tailwindcss",
-					"ts_ls",
-					-- "tsserver",
-					"pylsp",
-					"clangd",
-					"prismals",
-					"yamlls",
-					"jsonls",
-					"eslint",
-					-- "hls",
-					"zls",
-					"marksman",
-					"sqlls",
-					"wgsl_analyzer",
-					"intelephense",
-					"nim_langserver",
-				},
-			})
-		end,
-	},
+return { { "williamboman/mason.nvim", config = function() require("mason").setup({ PATH = "prepend", }) end, }, {
+	"williamboman/mason-lspconfig.nvim",
+	config = function()
+		require("mason-lspconfig").setup({
+			ensure_installed = {
+				"bashls",
+				"lua_ls",
+				"rust_analyzer",
+				--"gopls",
+				"templ",
+				"html",
+				"cssls",
+				"emmet_language_server",
+				"htmx",
+				"tailwindcss",
+				"ts_ls",
+				-- "tsserver",
+				"pylsp",
+				"clangd",
+				-- "codelldb",
+				"prismals",
+				"yamlls",
+				"jsonls",
+				"eslint",
+				-- "hls",
+				"zls",
+				"marksman",
+				"sqlls",
+				"wgsl_analyzer",
+				"intelephense",
+				"nim_langserver",
+			},
+		})
+	end,
+},
 	{
 		"neovim/nvim-lspconfig",
-		ft = { "python", "lua" },
 		config = function()
-			local capabilities = require("cmp_nvim_lsp").default_capabilities()
-
 			local lspconfig = require("lspconfig")
+			local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 			lspconfig.sqlls.setup({
 				capabilities = capabilities,
@@ -172,7 +162,7 @@ return {
 				configs.ts_ls = {
 					default_config = {
 						cmd = { "typescript-language-server", "--stdio" },
-						capabilties = capabilities,
+						capabilities = capabilities,
 						filetypes = {
 							"javascript",
 							"javascriptreact",
@@ -186,10 +176,10 @@ return {
 				}
 			end
 			lspconfig.ts_ls.setup({
-				-- capabilties = capabilities,
+				-- capabilities = capabilities,
 			})
 			lspconfig.eslint.setup({
-				capabilties = capabilities,
+				capabilities = capabilities,
 			})
 
 			require("lspconfig").clangd.setup({
@@ -242,21 +232,37 @@ return {
 								maxLineLength = 100, -- Optional: set your preferred line length
 							},
 							flake8 = {
-								enabled = false
-							}
-						}
-					}
-				}
+								enabled = true,
+								ignore = { "E501", "W293", "E403" },
+								maxLineLength = 100, -- Optional: set your preferred line length
+							},
+							pyflakes = {
+								enabled = true,
+							},
+							jedi_completion = {
+								enabled = true,
+								include_params = true,
+								fuzzy = true,
+							},
+							jedi_hover = {
+								enabled = true,
+							},
+							jedi_signature = {
+								enabled = true,
+							},
+						},
+					},
+				},
 			})
 
 			lspconfig.marksman.setup({
-				capabilties = capabilities,
+				capabilities = capabilities,
 			})
 			lspconfig.gleam.setup({
-				capabilties = capabilities,
+				capabilities = capabilities,
 			})
 			lspconfig.nim_langserver.setup({
-				capabilties = capabilities,
+				capabilities = capabilities,
 			})
 		end,
 	},

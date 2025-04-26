@@ -19,4 +19,5 @@ return {
 	{ "jacoborus/tender.vim" },
 	{ "dracula/vim" },
 	{ "NTBBloodbath/doom-one.nvim" },
+	{ "AlphaTechnolog/pywal.nvim" },
 }

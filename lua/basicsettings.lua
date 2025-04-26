@@ -1,7 +1,6 @@
 -- Basic Neovim settings
 vim.o.undofile = true                             -- Enable persistent undo history
 vim.o.undodir = vim.fn.stdpath('data') .. '/undo' -- Set undo file directory
-
 vim.o.backup = false                              -- Disable backup files
 vim.o.writebackup = false                         -- Disable write backup
 vim.o.swapfile = false                            -- Disable swap files
@@ -26,9 +25,9 @@ vim.o.scrolloff = 5
 vim.opt.smartcase = true
 
 vim.opt.shiftwidth = 2
-vim.o.smartindent = true               -- Automatically insert indentation
-vim.o.autoindent = true                -- Enable auto indentation
-vim.o.completeopt = "menuone,noselect" -- Enhance completion behavior
+vim.o.autoindent = true                     -- Enable auto indentation
+vim.o.smartindent = true                    -- Automatically insert indentation
+vim.o.completeopt = "menuone,noselect,menu" -- Enhance completion behavior
 
 
 
@@ -40,3 +39,8 @@ vim.opt.splitbelow = true
 vim.opt.splitright = true
 vim.o.wrap = true
 vim.o.linebreak = true -- wrapping lines
+vim.o.incsearch = true
+vim.o.hlsearch = true
+vim.o.smoothscroll = true
+vim.o.lazyredraw = true
+vim.notify = require("notify")
