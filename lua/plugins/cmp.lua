@@ -34,7 +34,7 @@ return {
 				sources = cmp.config.sources({
 					{ name = "nvim_lsp",  priority = 2 },
 					{ name = "ultisnips", priority = 1 },
-					--{ name = "buffer",    priority = -1 },
+					{ name = "buffer",    priority = -1 },
 					{ name = "path",      priority = 3 },
 				}),
 				experimental = {
