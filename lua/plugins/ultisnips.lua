@@ -8,9 +8,12 @@ return {
 			vim.g.vimtex_quickfix_open_on_warning = 0
 			vim.g.vimtex_quickfix_mode = 0
 			vim.g.vimtex_version_check = 0
-			vim.vimtex_compiler_method = 'latexmk'
+			vim.g.vimtex_compiler_method = 'latexmk'
 			vim.g.vimtex_syntax_enabled = 1
 			vim.g.vimtex_log_ignore = { 'Underfull', 'Overfull' }
+			vim.g.UltiSnipsLogLevel = "debug"
+			vim.g.UltiSnipsLogFile = vim.fn.expand("~/.cache/ultisnips.log")
+
 
 			vim.g.vimtex_compiler_latexmk = {
 				build_dir = 'build',
@@ -41,6 +44,9 @@ return {
 		"SirVer/ultisnips",
 		dependencies = { "lervag/vimtex" },
 		config = function()
+			require("cmp_nvim_ultisnips").setup {
+				use_treesitter = false,
+			}
 			vim.g.UltiSnipsMappingsEnable = 0
 			vim.g.UltiSnipsExpandTrigger = "<tab>"
 			vim.g.UltiSnipsJumpForwardTrigger = "<tab>"
@@ -57,4 +63,3 @@ return {
 		dependencies = { "SirVer/ultisnips" },
 	}
 }
-

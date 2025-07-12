@@ -29,6 +29,8 @@ return { { "williamboman/mason.nvim", config = function() require("mason").setup
 				"wgsl_analyzer",
 				"intelephense",
 				"nim_langserver",
+				"tinymist",
+				"astro",
 			},
 		})
 	end,
@@ -38,6 +40,11 @@ return { { "williamboman/mason.nvim", config = function() require("mason").setup
 		config = function()
 			local lspconfig = require("lspconfig")
 			local capabilities = require("cmp_nvim_lsp").default_capabilities()
+
+			-- Silencing auto start
+			lspconfig.util.default_config = vim.tbl_extend("force", lspconfig.util.default_config, {
+				autostart = false,
+			})
 
 			lspconfig.sqlls.setup({
 				capabilities = capabilities,
@@ -263,6 +270,14 @@ return { { "williamboman/mason.nvim", config = function() require("mason").setup
 			})
 			lspconfig.nim_langserver.setup({
 				capabilities = capabilities,
+			})
+			lspconfig.tinymist.setup({
+				capabilities = capabilities,
+				settings = {
+					formatterMode = "typstyle",
+					exportPdf = "onType",
+					semanticTokens = "disable",
+				},
 			})
 		end,
 	},

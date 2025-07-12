@@ -1,5 +1,5 @@
 vim.keymap.set("n", "<leader>m", ":messages<CR>", { desc = "Show message history" })
-vim.keymap.set("n", "<leader>w", ":w<CR>", { desc = "Save file" })
+vim.keymap.set("n", "<leader>w", ":wa<CR>", { desc = "Save file" })
 vim.keymap.set('v', '<leader>n', [[:norm ]], { noremap = true, silent = false })
 vim.keymap.set('v', '<leader>y', '"+y', { noremap = true, silent = true })
 vim.keymap.set("n", "n", "nzzzv")
@@ -12,6 +12,7 @@ vim.keymap.set("n", "<C-f>", "<C-f>zz")
 vim.keymap.set("n", "<C-b>", "<C-b>zz")
 vim.keymap.set("n", "Y", "yy")
 vim.keymap.set("n", "<leader>td", ":Td<CR>", { silent = True })
+vim.keymap.set("i", "<C-v>", '<C-r>+', { noremap = true, silent = true })
 
 
 -- disabling the stupid fucking
@@ -39,6 +40,15 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
+vim.api.nvim_create_autocmd("filetype", {
+	pattern = "cpp",
+	callback = function()
+		vim.api.nvim_buf_set_keymap(0, "n", "<leader>l",
+			":w<cr>:vert rightbelow split | term g++ -std=c++17 -O2 -Wall -Wextra -pedantic % -o TEST && ./TEST<cr>",
+			{ noremap = true, silent = true })
+	end,
+})
+
 -- Let arrow keys move per line in normal mode
 vim.keymap.set("n", "<Up>", "gk", { noremap = true })
 vim.keymap.set("n", "<Down>", "gj", { noremap = true })
@@ -58,3 +68,25 @@ vim.keymap.set("i", "<C-l>", "<c-g>u<Esc>[s1z=`]a<c-g>u", { noremap = true, sile
 vim.keymap.set('n', 'S', ':%s///g<Left><Left><Left>', { noremap = true, silent = true })
 -- For visual mode (xnoremap)
 vim.keymap.set('x', 'S', ':s///g<Left><Left><Left>', { noremap = true, silent = true })
+
+
+-- The figure funtion for latex files :
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "tex",
+	callback = function()
+		vim.keymap.set("i", "<C-f>", function()
+			local line = vim.fn.getline(".")
+			local root = vim.b.vimtex.root
+			local cmd = string.format('silent !inkscape-figures create "%s" "%s/figures/"', line, root)
+			vim.cmd(cmd)
+			vim.cmd("w")
+		end, { noremap = true, buffer = true })
+
+		vim.keymap.set("n", "<C-f>", function()
+			local root = vim.b.vimtex.root
+			local cmd = string.format('silent !inkscape-figures edit "%s/figures/" > /dev/null 2>&1 &', root)
+			vim.cmd(cmd)
+			vim.cmd("redraw!")
+		end, { noremap = true, buffer = true })
+	end
+})

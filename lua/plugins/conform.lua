@@ -24,6 +24,7 @@ return {
 				-- sql = { "sqlfmt" },
 				asm = { "asmfmt" },
 				css = { "prettier", stop_after_first = true },
+				astro = { "prettier" },
 			},
 			format_on_save = function(bufnr)
 				if vim.g.disable_autoformat then

@@ -14,7 +14,7 @@ return {
 			quiet = true,
 			verbose = false,
 			notifications = 0,
-			delay = 300
+			delay = 200
 		}
 
 		-- Set shortmess to suppress messages globally

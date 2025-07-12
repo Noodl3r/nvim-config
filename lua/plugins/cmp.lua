@@ -58,6 +58,10 @@ return {
 					}),
 				},
 			})
+			-- Disable cmp for tex buffers
+			cmp.setup.filetype({ "tex", "plaintex", "latex" }, {
+				enabled = false
+			})
 		end
 	},
 	{
