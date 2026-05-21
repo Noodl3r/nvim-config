@@ -174,7 +174,7 @@ vim.keymap.set('n', '<leader><tab>', ':Oil<CR>', { silent = true })
 vim.keymap.set('n', '<leader>w', ':w<CR>', {silent = true})
 vim.keymap.set('n', '<leader>gg', ':LazyGit<CR>', {silent = true})
 vim.keymap.set('n', '<leader>ff', ':find ', {silent = false})
-vim.keymap.set('n', '<leader>fd', ':find ~/.config/nvim ', {silent = false})
+-- vim.keymap.set('n', '<leader>fd', ':find ~/.config/nvim ', {silent = false})
 
 vim.keymap.set('n', '<leader>fg', function()
   local input = vim.fn.input("Grep > ")
