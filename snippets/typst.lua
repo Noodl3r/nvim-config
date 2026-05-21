@@ -1,0 +1,269 @@
+local MATH_NODES = {
+	formula = true,
+	math = true,
+}
+
+local NON_MATH_NODES = {
+	code = true,
+	text = true,
+	raw_blck = true,
+	source_file = true,
+}
+
+local function is_math_mode()
+	local node = vim.treesitter.get_node({ ignore_injections = false })
+	while node do
+		if NON_MATH_NODES[node:type()] then
+			return false
+		elseif MATH_NODES[node:type()] then
+			return true
+		end
+		node = node:parent()
+	end
+	return true
+end
+
+local function is_not_math_mode()
+    return not is_math_mode()
+end
+
+return {
+	--------------------------------
+	--------------------------------
+	-- quick markup utilities
+	--------------------------------
+	--------------------------------
+
+	-- if you don't want to trigger some of these automatic snippets,
+	-- for example to type a literaly 'uq', type ctrl-v q and it will type
+	-- a 'q' without triggering
+
+	s(
+		{
+			-- this is python's exponentiation syntax
+			trig = "**",
+			name = "superscript",
+			wordTrig = false,
+			snippetType = "autosnippet",
+			condition = function(_, _, _)
+				return is_math_mode()
+			end
+		}, fmt("^({})", { i(1) })),
+
+    -- Display math block
+    s({ trig = "qo", name = "display math", wordTrig = false, snippetType = "autosnippet",
+        condition = is_not_math_mode },
+        fmt("$\n  {}\n$", { i(1) })),
+
+    -- Inline math
+    s({ trig = "qi", name = "inline math", wordTrig = false, snippetType = "autosnippet",
+        condition = is_not_math_mode },
+        fmt("${}$", { i(1) })),
+
+    -- Equation with label
+    s({ trig = "qe", name = "equation with label", wordTrig = false,
+        condition = is_not_math_mode },
+        fmt("$ {} $ <{}>", { i(1), i(2, "label") })),
+
+    -- Square root
+    s({ trig = "sq", name = "square root", wordTrig = false, snippetType = "autosnippet",
+        condition = is_math_mode },
+        fmt("sqrt({}) ", { i(1) })),
+
+    -- Exponent replacement
+    s({trig = "ra", name = "raise", wordTrig = false, snippetType = "autosnippet", condition = is_math_mode},
+    t("^ ")),
+
+    --subscript
+    s({ trig = "_", regTrig = true, name = "subscript", wordTrig = false, snippetType = "autosnippet", condition = is_math_mode },
+fmt("_({})", { i(1) })),
+
+        
+    s(
+        { trig = "([A-Za-z])_(%d%d)", regTrig = true, wordTrig = false, snippetType = "autosnippet" },
+        { f(function(_, snip) return snip.captures[1] end), t("_{"), f(function(_, snip) return snip.captures[2] end), t("}") },
+        { condition = is_math_mode, show_condition = is_math_mode }
+    ),
+    s(
+        { trig = "([A-Za-z])(%d)", regTrig = true, wordTrig = false, snippetType = "autosnippet" },
+        { f(function(_, snip) return snip.captures[1] end), t("_"), f(function(_, snip) return snip.captures[2] end) },
+        { condition = is_math_mode, show_condition = is_math_mode }
+    ),
+
+
+    -- Vector
+    s({ trig = "vec", name = "vector", wordTrig = true, snippetType = "autosnippet",
+        condition = is_math_mode },
+        fmt("vec({}) ", { i(1) })),
+
+    -- Matrix
+    s({ trig = "mat", name = "matrix", wordTrig = true, snippetType = "autosnippet",
+        condition = is_math_mode },
+        fmt("mat({delim}: \"[\"; {})", { i(1), delim = t("") })),
+
+	s( { trig = "invs", name = "invert", wordTrig = false, snippetType = "autosnippet",
+			condition = function(_, _, _)
+				return is_math_mode()
+			end
+		}, t("^(-1) ")),
+
+	s( { trig = "sr", name = "square exponent", wordTrig = false, snippetType = "autosnippet",
+			condition = function(_, _, _)
+				return is_math_mode()
+			end
+		}, t("^2 ")),
+
+	s( { trig = "cb", name = "cube exponent", wordTrig = false, snippetType = "autosnippet",
+			condition = function(_, _, _)
+				return is_math_mode()
+			end
+		}, t("^3 ")),
+
+	s( { trig = "+-", name = "plus minus", wordTrig = false, snippetType = "autosnippet",
+			condition = function(_, _, _)
+				return is_math_mode()
+			end
+		}, t("plus.minus ")),
+
+	s( { trig = "dx", name = "differential unit", wordTrig = false, snippetType = "autosnippet",
+			condition = function(_, _, _)
+				return is_math_mode()
+			end
+		}, t('space "d"x ')),
+
+	s(
+		{
+			trig = "#",
+			name = "code (inline math)",
+			desc = "Tells tree-sitter that we are in a code block, to prevent completing math elements.",
+			wordTrig = false,
+			condition = function(_, _, _)
+				return is_math_mode()
+			end
+		}, fmt("#({})", { i(1) })),
+
+    s(
+        { trig = "dint", name = "integral (definite)", wordTrig = true, snippetType = "autosnippet", condition = is_math_mode },
+        fmt("integral_({})^({}) ", { i(1), i(2) })),
+    s(
+        { trig = "int", name = "integral (indefinite)", wordTrig = true, snippetType = "autosnippet", condition = is_math_mode},
+        t("integral ")),
+
+	-- limits
+	s({ trig = "plus", name = "plus exponent", wordTrig = false }, t("^+")),
+	s({ trig = "min", name = "minus exponent", wordTrig = false }, t("^-")),
+	s({ trig = "lim", name = "limit", wordTrig = true }, fmt("lim_({}) ", { i(1) })),
+	s({ trig = "sum", name = "summation", wordTrig = true }, fmt("sum_({})^({}) ", { i(1), i(2) })),
+	s({ trig = "inf", name = "infinity", wordTrig = true }, t("infinity")),
+	s({ trig = "abs", name = "absolute value", wordTrig = true }, fmt("abs({})", { i(1) })),
+
+
+	s({ trig = "link", desc = "labelled link" }, fmt('#link("{}{}")[{}]', {
+		i(1),
+		f(function(args, _)
+			-- use clipboard contents as a placeholder
+			if not args[1][1] or args[1][1] == "" then
+				return vim.fn.getreg("+")
+			else
+				return ""
+			end
+		end, { 1 }),
+		i(2),
+	})),
+
+	--------------------------------
+	--------------------------------
+	-- figures
+	-- (biggest waste of time ever)
+	-- (supposedly advanced snippet practice)
+	--------------------------------
+	--------------------------------
+	s({ trig = "fig(%a?)", regTrig = true, desc = "create a figure" }, fmt([[
+	#figure(
+	  {content}
+	  caption: [{caption}],
+	) <{label}>
+	]], {
+		caption = i(2, "Caption"),
+		label = i(1, "label"),
+		content = d(3, function(args, snip)
+			if not snip.captures[1] or snip.captures[1] == "" then
+				-- regular figure
+				return sn(nil,
+					fmt([[
+					image("{path}.{ext}"),
+					]], {
+						path = f(function()
+							return "fig/" .. vim.fn.expand("%:r") .. "/" .. (args[1][1] or nil)
+						end),
+						ext = c(1, { t("svg"), t("jpg"), t("png") })
+					})
+				)
+			elseif snip.captures[1] == "t" then
+				return sn(nil,
+					fmt([[
+					tablef(
+					    columns: {cols},
+					    table.header{head},
+					    {content}
+					  ),
+					]], {
+						head = i(1, "[Header][Header]"),
+						content = i(2, "[Content], [Content],"),
+						cols = f(function(largs)
+							-- the number of columns is the number of left brackets [ in the header
+							local _, cnt = string.gsub(largs[1][1], "%[", "")
+							-- the error for not converting to string was cryptic
+							-- wasted 10 minutes on this :(
+							return tostring(cnt)
+						end, { 1 })
+					})
+				)
+			end
+		end, { 1 }),
+	})),
+
+	--------------------------------
+	--------------------------------
+	-- document templates
+	--------------------------------
+	--------------------------------
+
+	-- this template is deprecated
+	s({ trig = "general", desc = "General document template" }, fmt([[
+	#import "/templates/general.typ": template, lref
+	#import "/templates/libs.typ": *
+	#show: template.with(
+	  title: "{}",
+	  prefix: "{}",
+	  suffix: "{}",
+	)
+
+	]], { i(1), i(2), i(3) })),
+
+	-- this template is deprecated
+	s({ trig = "problem", desc = "Problem write-up template" }, fmt([[
+	#import "/templates/problems.typ": template, source_code, status, lref
+	#import "/templates/libs.typ": *
+	#show: template.with(
+	  problem_url: "{}",
+	  title: "{}",
+	  stat: "{}",
+	)
+
+	]], { i(1), i(2), t("incomplete") })),
+
+	s({ trig = "book", desc = "New notes template" }, fmt([[
+	#import "@local/mousse-notes:0.6.2": *
+	#set page(paper: "us-letter")
+	#show: book.with(
+	  title: [{}],
+	  subtitle: {},
+	  subsubtitle: {},
+	  subsubsubtitle: {},
+	  author: {},
+	)
+
+
+	]], { i(1), i(2, "none"), i(3, "none"), i(4, "none"), i(5, "none") })),
+}
