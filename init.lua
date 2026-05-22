@@ -21,7 +21,6 @@ vim.pack.add {
     { src = 'https://github.com/hrsh7th/cmp-buffer'},
     { src = 'https://github.com/hrsh7th/cmp-path'},
     { src = 'https://github.com/hrsh7th/cmp-cmdline'},
-    { src = 'https://github.com/hrsh7th/nvim-cmp'},
 }
 
 
@@ -112,36 +111,6 @@ vim.keymap.set('n', '<leader>2', function() harpoon:list():select(2) end)
 vim.keymap.set('n', '<leader>3', function() harpoon:list():select(3) end)
 vim.keymap.set('n', '<leader>4', function() harpoon:list():select(4) end)
 
--- Telescope shit
--- local telescope = require("telescope")
--- local default_color = "neopywal-dark"
--- telescope.setup({
--- 	defaults = {
--- 		preview = { treesitter = true },
--- 		color_devicons = true,
--- 		sorting_strategy = "ascending",
--- 		borderchars = {
--- 			"", -- top
--- 			"", -- right
--- 			"", -- bottom
--- 			"", -- left
--- 			"", -- top-left
--- 			"", -- top-right
--- 			"", -- bottom-right
--- 			"", -- bottom-left
--- 		},
--- 		path_displays = { "smart" },
--- 		layout_config = {
--- 			height = 100,
--- 			width = 400,
--- 			prompt_position = "top",
--- 			preview_cutoff = 100,
--- 		}
--- 	}
--- })
--- telescope.load_extension("ui-select")
-
- 
 vim.api.nvim_set_hl(0, "MiniIndentscopeSymbol", {
     link = "Identifier",
 })
