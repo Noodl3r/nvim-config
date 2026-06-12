@@ -14,8 +14,11 @@ vim.pack.add {
     { src = 'https://github.com/kdheepak/lazygit.nvim'},
     { src = 'https://github.com/chentoast/marks.nvim'},
     { src = 'https://github.com/mbbill/undotree'},
+    { src = 'https://github.com/stevearc/conform.nvim' },
     { src = 'https://github.com/nvim-lua/plenary.nvim'},
+    { src = 'https://github.com/ej-shafran/compile-mode.nvim'},
     { src = 'https://github.com/p00f/clangd_extensions.nvim'},
+    { src = 'https://github.com/mfussenegger/nvim-jdtls'},
     { src = 'https://github.com/hrsh7th/nvim-cmp'},
     { src = 'https://github.com/hrsh7th/cmp-nvim-lsp'},
     { src = 'https://github.com/hrsh7th/cmp-buffer'},
@@ -51,16 +54,13 @@ vim.opt.rulerformat = '%t'
 vim.opt.winborder = "rounded"
 vim.opt.spell = true
 vim.opt.spelllang = {"en_us"}
-
 vim.cmd.colorscheme('neopywal')
-
 
 vim.cmd [[
   aunmenu PopUp
   autocmd! nvim.popupmenu
 ]]
 
--- Only highlight with tree sitter
 vim.cmd('syntax on')
 
 require("nvim-highlight-colors").setup {
@@ -106,10 +106,11 @@ local harpoon = require('harpoon')
 
 vim.keymap.set('n', '<leader>a', function() harpoon:list():add() end)
 vim.keymap.set('n', '<leader>e', function() harpoon.ui:toggle_quick_menu(harpoon:list()) end)
-vim.keymap.set('n', '<leader>1', function() harpoon:list():select(1) end)
-vim.keymap.set('n', '<leader>2', function() harpoon:list():select(2) end)
-vim.keymap.set('n', '<leader>3', function() harpoon:list():select(3) end)
-vim.keymap.set('n', '<leader>4', function() harpoon:list():select(4) end)
+for i = 1, 9 do
+  vim.keymap.set("n", "<leader>" .. i, function()
+    harpoon:list():select(i)
+  end, { desc = "Harpoon file " .. i })
+end
 
 vim.api.nvim_set_hl(0, "MiniIndentscopeSymbol", {
     link = "Identifier",
@@ -142,13 +143,16 @@ vim.keymap.set("n", "q:", "<nop>")
 vim.keymap.set('n', '<leader><tab>', ':Oil<CR>', { silent = true })
 vim.keymap.set('n', '<leader>w', ':w<CR>', {silent = true})
 vim.keymap.set('n', '<leader>gg', ':LazyGit<CR>', {silent = true})
-vim.keymap.set('n', '<leader>ff', ':find ', {silent = false})
--- vim.keymap.set('n', '<leader>fd', ':find ~/.config/nvim ', {silent = false})
+vim.keymap.set('n', '<leader>ff', ':find: ', {silent = false})
 
 vim.keymap.set('n', '<leader>fg', function()
-  local input = vim.fn.input("Grep > ")
-  if input == "" then return end
-  vim.cmd("grep " .. vim.fn.shellescape(input))
+  local input = vim.fn.input("grep: ")
+  if input == "" then
+    return
+  end
+
+  vim.cmd('grep! ' .. vim.fn.shellescape(input))
+  vim.cmd('copen')
 end)
 
 vim.keymap.set('n', '<leader>q', function()
@@ -203,16 +207,6 @@ vim.api.nvim_create_autocmd('FileType', {
     end,
 })
 
-vim.api.nvim_create_autocmd('FileType', {
-    pattern = {'c', 'cpp'},
-    callback = function()
-        vim.keymap.set('n', '<leader>h', '<cmd>ClangdSwitchSourceHeader<CR>', { buffer = true, silent = true })
-        vim.keymap.set('n', '<leader>l',
-            ':w<cr>:vert rightbelow split | term g++ -std=c++20 -DLOCAL_TEST -O2 -Wall -Wextra -pedantic % -o TEST && ./TEST<cr>',
-            { buffer = true, silent = true })
-    end,
-})
-
 vim.api.nvim_create_autocmd('TermOpen', {
     callback = function()
         vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { buffer = true, noremap = true })
@@ -225,6 +219,7 @@ vim.lsp.config('clangd', {
     filetypes = { 'c', 'cpp' },
     root_markers = { 'compile_commands.json', 'CMakeLists.txt', '.git' },
 })
+
 vim.api.nvim_create_autocmd('BufWritePre', {
     pattern = { '*.cpp', '*.h', '*.c' },
     callback = function() vim.lsp.buf.format({ async = false }) end,
@@ -234,6 +229,59 @@ vim.lsp.config('verible', {
     cmd = { 'verible-verilog-ls' },
     filetypes = { 'verilog', 'systemverilog' },
     root_markers = { '.git' },
+})
+
+vim.lsp.config('zls', {
+    cmd = { 'zls' },  
+    filetypes = { 'zig', 'zon' },
+    root_markers = { 'build.zig', 'build.zig.zon', '.git' },
+
+    settings = {
+        zls = {
+            --zig_exe_path = '/usr/bin/zig', 
+            enable_build_on_save = false,
+        }
+    }
+})
+
+vim.lsp.config('ts_ls', {
+    cmd = { 'typescript-language-server', '--stdio' },
+
+    filetypes = {
+        'javascript',
+        'javascriptreact',
+        'typescript',
+        'typescriptreact',
+    },
+
+    root_markers = {
+        'tsconfig.json',
+        'package.json',
+        'jsconfig.json',
+        '.git',
+    },
+
+    init_options = {
+        hostInfo = "neovim",
+    },
+})
+-- Conform stuff for typescript etc 
+
+require('conform').setup({
+  formatters_by_ft = {
+    javascript = { 'prettier' },
+    javascriptreact = { 'prettier' },
+    typescript = { 'prettier' },
+    typescriptreact = { 'prettier' },
+    json = { 'prettier' },
+    css = { 'prettier' },
+    html = { 'prettier' },
+  },
+
+  format_on_save = {
+    timeout_ms = 500,
+    lsp_fallback = true,
+  },
 })
 
 vim.lsp.enable({
@@ -260,7 +308,7 @@ vim.api.nvim_create_autocmd('LspAttach', {
         end
         if client:supports_method('textDocument/completion') then
             vim.o.complete = 'o,.,w,b,u'
-            vim.o.completeopt = 'menu,menuone,popup,noinsert'
+            vim.o.completeopt = 'menu,menuone,noinsert'
             vim.lsp.completion.enable(true, client.id, args.buf)
         end
 	local map = function(keys, func) 
@@ -296,19 +344,6 @@ vim.api.nvim_create_autocmd('QuickFixCmdPost', {
     callback = function() vim.cmd('copen 5') end,
 })
 
-vim.api.nvim_create_autocmd('FileType', {
-    pattern = { 'verilog', 'systemverilog' },
-    callback = function()
-        vim.opt_local.tabstop = 2
-        vim.opt_local.shiftwidth = 2
-        -- build/simulate keymap
-        vim.keymap.set('n', '<leader>l',
-            ':w<CR>:vert rightbelow split | term iverilog % -o sim && ./sim<CR>',
-            { buffer = true, silent = true })
-    end,
-})
-
-
 -- Evil snippet stuff : 
 local ls = require("luasnip")
 
@@ -342,6 +377,21 @@ end, { mode = { "s", "i" } })
 require("luasnip.loaders.from_lua").load({ paths = vim.fn.stdpath("config") .. "/snippets" })
 ls.config.setup({ enable_autosnippets = true })
 
+vim.g.compile_mode = {
+    bang_expansion = true,
+    open_window = "vsplit",
+    default_command = {
+        c   = "gcc -Wall -Wextra % -o %:r && ./%:r",
+        cpp = "g++ -std=c++20 -Wall -Wextra -pedantic % -o %:r && ./%:r",
+        java = "javac % && java %:r",
+        python = "python %",
+    },
+    auto_jump_to_first_error = true,
+    focus_compilation_buffer = false,
+    auto_scroll = true,
+}
+vim.keymap.set("n", "<leader>l", "<cmd>vert Compile<CR>")
+vim.keymap.set("n", "<leader>L", "<cmd>vert Recompile<CR>")
 
 -- CMP stuff : 
 
